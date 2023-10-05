@@ -9,7 +9,6 @@ export default function Home() {
       <Link href="/testAuthentication">User Authentication</Link>
       <Link href="/testDiaries">Diaries</Link>
       <Link href="/testImages">Multimedia Integration</Link>
-      <Button type="primary">TEst</Button>
     </main>
 
   )

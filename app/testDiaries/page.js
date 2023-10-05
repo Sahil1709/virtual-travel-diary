@@ -118,25 +118,22 @@ const TestDiaries = () => {
                 dataSource={diaries}
                 renderItem={(diary) => (
                     <List.Item>
-                        <Link href={pathname + '/' + diary.id}>
-                            <Card
-                                title={diary.diaryName}
-                                extra={
-                                    <>
-                                        <Button type="link" onClick={() => onEdit(diary)}>
-                                            Edit
-                                        </Button>
-                                        <Button type="link" onClick={() => onDelete(diary.id)}>
-                                            Delete
-                                        </Button>
-                                    </>
-                                }
-                            >
-                                <p>Location: {diary.location}</p>
-                                <p>Description: {diary.description}</p>
-                            </Card>
-                        </Link>
-
+                        <Card
+                            title={<Link href={pathname + '/' + diary.id} className="text-black font-bold">{diary.diaryName}</Link>}
+                            extra={
+                                <>
+                                    <Button type="link" onClick={() => onEdit(diary)}>
+                                        Edit
+                                    </Button>
+                                    <Button type="link" onClick={() => onDelete(diary.id)}>
+                                        Delete
+                                    </Button>
+                                </>
+                            }
+                        >
+                            <p>Location: {diary.location}</p>
+                            <p>Description: {diary.description}</p>
+                        </Card>
                     </List.Item>
                 )}
             />

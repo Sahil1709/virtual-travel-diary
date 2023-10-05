@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { Button } from "antd";
 import { UserAuth } from "../context/AuthContext";
 
 const TestAuthentication = () => {
@@ -37,15 +38,15 @@ const TestAuthentication = () => {
     return <>
         {!user ? (
             <>
-                <button className="btn" onClick={handleSignIn}>
+                <Button type="primary" onClick={handleSignIn}>
                     Log In
-                </button>
+                </Button>
                 <div>You must be logged in to view your name!</div>
             </>
 
         ) : (
             <>
-                <button onClick={handleSignOut}>Sign Out</button>
+                <Button type="primary" onClick={handleSignOut}>Sign Out</Button>
                 <div>Welcome {user.displayName}</div>
             </>
         )
