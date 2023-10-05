@@ -1,6 +1,9 @@
 "use client"
 import './globals.css'
 import { AuthContextProvider } from "./context/AuthContext";
+import { Layout } from 'antd';
+import { Content, Footer } from 'antd/es/layout/layout';
+import Header from './components/Header';
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -15,7 +18,25 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <AuthContextProvider>
-          {children}
+          <Layout>
+            <Header />
+
+            <Content style={{ height: "100vh" }}>
+              {children}
+            </Content>
+
+            <Footer
+              style={{
+                textAlign: "center",
+                position: "fixed",
+                bottom: 0,
+                width: "100%",
+                backgroundColor: "white",
+              }}
+            >
+              Virtual Travel Diary ©2023 Created by Sahil Gupta
+            </Footer>
+          </Layout>
         </AuthContextProvider>
       </body>
     </html>
