@@ -1,3 +1,4 @@
+import { Button } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -8,6 +9,7 @@ export default function Home() {
       <Link href="/testAuthentication">User Authentication</Link>
       <Link href="/testDiaries">Diaries</Link>
       <Link href="/testImages">Multimedia Integration</Link>
+      <Button type="primary">TEst</Button>
     </main>
 
   )
