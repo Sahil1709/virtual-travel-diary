@@ -56,7 +56,7 @@ const TestAuthentication = () => {
         });
     };
 
-    // Edit user profile functions
+    // * user edit porfile functions
     const setProfileDataFromDatabase = async () => {
         if (user) {
             const docRef = doc(database, "users", user.uid);
@@ -132,7 +132,6 @@ const TestAuthentication = () => {
                 style={{
                     maxWidth: 600,
                 }}
-
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
