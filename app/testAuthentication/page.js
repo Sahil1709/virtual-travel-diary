@@ -5,28 +5,12 @@ import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { database } from "../firebase";
 import Title from "antd/es/typography/Title";
 import { UserAuth } from "../context/AuthContext";
+import Custom403 from "../components/Custom403";
 
 const TestAuthentication = () => {
-    const { user, googleSignIn, logOut } = UserAuth();
+    const { user } = UserAuth();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(true);
-
-    // User Authentication functions
-    const handleSignIn = async () => {
-        try {
-            await googleSignIn();
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleSignOut = async () => {
-        try {
-            await logOut();
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     useEffect(() => {
         const checkAuthentication = async () => {
@@ -108,18 +92,11 @@ const TestAuthentication = () => {
 
     if (loading) return <div>Loading ...</div>
 
-    if (!user)
-        return (<>
-            <Button type="primary" onClick={handleSignIn}>
-                Log In
-            </Button>
-            <Title type="danger"> You must be logged in - Protected route</Title>
-        </>);
+    if (!user) return <Custom403 />
 
     return (
         <>
             {contextHolder}
-            <Button type="primary" onClick={handleSignOut}>Sign Out</Button>
             <Title >Welcome {user.displayName}</Title>
 
             <Form form={form} name="basic"

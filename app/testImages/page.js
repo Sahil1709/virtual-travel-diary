@@ -5,6 +5,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Image, List, message, Upload, Row, Col } from 'antd';
 import { Progress, Space, Spin } from 'antd';
 import { UserAuth } from "../context/AuthContext";
+import Custom403 from "../components/Custom403";
 
 // Get a reference to the storage service, which is used to create references in your storage bucket
 import { storage } from "../firebase";
@@ -56,7 +57,7 @@ const TestImages = () => {
 
 
     // const props = {
-    //   name: 'file',
+    // name: 'file',
     //   // action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
     //   // headers: {
     //   //   authorization: 'authorization-text',
@@ -175,37 +176,39 @@ const TestImages = () => {
         console.log(downloadURLSofCurrentUser)
     }
 
+    if (loading) return <>
+        <div className="m-20 text-center pt-20">
+            <Spin tip="loading..." size="large" ><div /></Spin>
+        </div>
+    </>
+
+    if (!user) return <Custom403 />
+
     return (
-        <>
-            {loading ? (
-                <div className="m-20 text-center pt-20">
-                    <Spin tip="loading..." size="large" ><div /></Spin>
-                </div>
-            ) : !user ? (
-                <Title type="danger"> You must be logged in - Protected route</Title>
-            ) : (
-                <div>
-
-                    <Title>{user && user.displayName}'s Images </Title>
-                    <input type="file" onChange={handleChange} />
-
-                    <Button icon={<UploadOutlined />} onClick={handleSubmit}> Click to Upload</Button>
-
-                    {progress > 0 && <Progress type="circle" percent={progress} />}
 
 
-                    {downloadURL && <Image src={downloadURL} width={200} />}
-                    <div><Button onClick={getAllDownloadUrls}>Get all download urls of current user</Button></div>
-                    <Row>
-                        {downloadURLSofCurrentUser ? downloadURLSofCurrentUser.map((url) =>
-                            <Col key={url}>
-                                <Image src={url} width={200} />
-                            </Col>) : <Title>Nothing to display</Title>}
-                    </Row>
+        <div>
 
-                </div>
-            )}
-        </>
+            <Title>{user && user.displayName}'s Images </Title>
+            <input type="file" onChange={handleChange} />
+
+            <Button icon={<UploadOutlined />} onClick={handleSubmit}> Click to Upload</Button>
+
+            {progress > 0 && <Progress type="circle" percent={progress} />}
+
+
+            {downloadURL && <Image src={downloadURL} width={200} />}
+            <div><Button onClick={getAllDownloadUrls}>Get all download urls of current user</Button></div>
+            <Row>
+                {downloadURLSofCurrentUser ? downloadURLSofCurrentUser.map((url) =>
+                    <Col key={url}>
+                        <Image src={url} width={200} />
+                    </Col>) : <Title>Nothing to display</Title>}
+            </Row>
+
+        </div>
+
+
 
     );
 };

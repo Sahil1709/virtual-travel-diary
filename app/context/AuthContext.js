@@ -14,6 +14,7 @@ export const AuthContextProvider = ({ children }) => {
 
     const googleSignIn = () => {
         const provider = new GoogleAuthProvider();
+        //! Handle firebase error user cancelled popup
         signInWithPopup(auth, provider);
     };
 
