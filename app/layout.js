@@ -2,8 +2,9 @@
 import './globals.css'
 import { AuthContextProvider } from "./context/AuthContext";
 import { Layout } from 'antd';
-import { Content, Footer } from 'antd/es/layout/layout';
+import { Content } from 'antd/es/layout/layout';
 import Header from './components/Header';
+import MyFooter from './components/Footer';
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,18 +27,7 @@ export default function RootLayout({ children }) {
               {children}
             </Content>
 
-            //TODO Footer should be at the end of body content, it should not stick to the bottom of page
-            <Footer
-              style={{
-                textAlign: "center",
-                position: "fixed",
-                bottom: 0,
-                width: "100%",
-                backgroundColor: "white",
-              }}
-            >
-              Virtual Travel Diary ©2023 Created by Sahil Gupta
-            </Footer>
+            <MyFooter />
           </Layout>
         </AuthContextProvider>
       </body>

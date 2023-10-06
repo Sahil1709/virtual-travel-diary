@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, Form, Input, Button, List, Modal } from "antd";
+import { Card, Form, Input, Button, List, Modal, Row, Col } from "antd";
 import { useRouter, usePathname } from 'next/navigation';
 import { UserAuth } from "@/app/context/AuthContext";
 import firebase from "firebase/app";

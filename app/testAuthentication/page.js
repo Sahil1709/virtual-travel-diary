@@ -14,8 +14,8 @@ const TestAuthentication = () => {
 
     useEffect(() => {
         const checkAuthentication = async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            setLoading(false);
+            // await new Promise((resolve) => setTimeout(resolve, 1000));
+            // setLoading(false);
             setProfileDataFromDatabase();
         };
         checkAuthentication();
@@ -89,8 +89,6 @@ const TestAuthentication = () => {
         openNotification("error", "Error", "Please fill the form correctly.");
         console.log('Failed:', errorInfo);
     };
-
-    if (loading) return <div>Loading ...</div>
 
     if (!user) return <Custom403 />
 
