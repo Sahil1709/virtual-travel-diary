@@ -6,6 +6,7 @@ import { UserAuth } from "@/app/context/AuthContext";
 import firebase from "firebase/app";
 import { database } from "../firebase";
 import Custom403 from "../components/Custom403";
+import Loading from "../loading";
 import "firebase/firestore";
 import {
     doc,
@@ -27,7 +28,15 @@ const TestDiaries = () => {
     const [diaries, setDiaries] = useState([]);
     const [visible, setVisible] = useState(false);
     const [editId, setEditId] = useState(null);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setLoading(false);
+        };
+        checkAuthentication();
+    }, [user]);
     useEffect(() => {
         if (user) {
             // Fetch diaries for the current user
@@ -81,6 +90,8 @@ const TestDiaries = () => {
         form.setFieldsValue(diary);
         setVisible(true);
     };
+
+    if (loading) return <Loading />
 
     if (!user) return <Custom403 />
 

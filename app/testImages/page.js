@@ -28,7 +28,7 @@ const TestImages = () => {
     useEffect(() => {
         const checkAuthentication = async () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
-
+            setLoading(false);
         };
         checkAuthentication();
     }, [user]);
@@ -54,7 +54,7 @@ const TestImages = () => {
                     console.log(error)
                 });
         }
-        setLoading(false);
+
     }, [user, storage])
 
 
