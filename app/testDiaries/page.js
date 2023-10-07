@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { UserAuth } from "@/app/context/AuthContext";
 import firebase from "firebase/app";
 import { database } from "../firebase";
+import Custom403 from "../components/Custom403";
 import "firebase/firestore";
 import {
     doc,
@@ -19,6 +20,7 @@ import {
 } from "firebase/firestore";
 import Link from "next/link";
 
+//TODO: Move all the data fetching logic outside main 
 const TestDiaries = () => {
     const pathname = usePathname();
     const { user } = UserAuth();
@@ -81,6 +83,8 @@ const TestDiaries = () => {
         setVisible(true);
     };
 
+    if (!user) return <Custom403 />
+
     return (
         <div>
             <h1>{user && user.displayName}'s Diaries</h1>
@@ -114,7 +118,9 @@ const TestDiaries = () => {
                     </Form.Item>
                 </Form>
             </Modal>
+
             <List
+                //TODO: Implement a grid here instead of list
                 dataSource={diaries}
                 renderItem={(diary) => (
                     <List.Item>

@@ -1,7 +1,7 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { Menu } from "antd";
 import {
   AppstoreOutlined,
@@ -66,28 +66,29 @@ const itemsForReference = [
   },
 ];
 
-const items = [
-  {
-    label: <Link href={"/"}>Homepage</Link>,
-    key: "home",
-  },
-  {
-    label: <Link href={"/testAuthentication"}>Test Authentication</Link>,
-    key: "auth",
-  },
-  {
-    label: <Link href={"/testDiaries"}>Test Diaries</Link>,
-    key: "diaries",
-  },
-  //TODO: try using next/link here
-  {
-    label: <a href={"/testImages"}>Test Images</a>,
-    key: "images",
-  },
-];
-
 const Navbar = () => {
-  const [current, setCurrent] = useState("mail");
+  const pathName = usePathname();
+  const [current, setCurrent] = useState(pathName);
+
+  const items = [
+    {
+      label: <Link href={"/"}>Homepage</Link>,
+      key: "/",
+    },
+    {
+      label: <Link href={"/testAuthentication"}>Test Authentication</Link>,
+      key: "/testAuthentication",
+    },
+    {
+      label: <Link href={"/testDiaries"}>Test Diaries</Link>,
+      key: "/testDiaries",
+    },
+    //TODO: try using next/link here
+    {
+      label: <a href={"/testImages"}>Test Images</a>,
+      key: "/testImages",
+    },
+  ];
 
   const onClick = (e) => {
     console.log("click ", e);
@@ -102,7 +103,7 @@ const Navbar = () => {
       selectedKeys={[current]}
       style={{ justifyContent: "center" }}
       mode="horizontal"
-      defaultSelectedKeys={["home"]}
+      // defaultSelectedKeys={["home"]}
     />
   );
 };
