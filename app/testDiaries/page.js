@@ -20,7 +20,6 @@ import {
 } from "firebase/firestore";
 import Link from "next/link";
 
-//TODO: Move all the data fetching logic outside main 
 const TestDiaries = () => {
     const pathname = usePathname();
     const { user } = UserAuth();
@@ -123,7 +122,7 @@ const TestDiaries = () => {
                 //TODO: Implement a grid here instead of list
                 dataSource={diaries}
                 renderItem={(diary) => (
-                    <List.Item>
+                    <List.Item style={{ justifyContent: "center" }}>
                         <Card
                             title={<Link href={pathname + '/' + diary.id} className="text-black font-bold">{diary.diaryName}</Link>}
                             extra={

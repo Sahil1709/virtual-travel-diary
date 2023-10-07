@@ -1,11 +1,13 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL, listAll } from "firebase/storage";
+import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL, listAll, deleteObject } from "firebase/storage";
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Image, List, message, Upload, Row, Col } from 'antd';
 import { Progress, Space, Spin } from 'antd';
+import { DownloadOutlined, DeleteOutlined } from "@ant-design/icons"
 import { UserAuth } from "../context/AuthContext";
 import Custom403 from "../components/Custom403";
+import Loading from "../loading";
 
 // Get a reference to the storage service, which is used to create references in your storage bucket
 import { storage } from "../firebase";
@@ -18,10 +20,15 @@ const TestImages = () => {
     });
     const { user } = UserAuth();
     const [loading, setLoading] = useState(true);
+    const [image, setImage] = useState(null);
+    const [progress, setProgress] = useState(0);
+    const [downloadURL, setDownloadURL] = useState(null);
+    const [downloadURLSofCurrentUser, setdownloadURLSofCurrentUser] = useState([]);
+
     useEffect(() => {
         const checkAuthentication = async () => {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            setLoading(false);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
         };
         checkAuthentication();
     }, [user]);
@@ -36,6 +43,7 @@ const TestImages = () => {
                         getDownloadURL(itemRef).then((url) => {
                             console.log(url)
                             data.push(url);
+
                             setdownloadURLSofCurrentUser((prevDownloadURLSofCurrentUser) => [
                                 ...prevDownloadURLSofCurrentUser,
                                 url,
@@ -46,14 +54,8 @@ const TestImages = () => {
                     console.log(error)
                 });
         }
-
+        setLoading(false);
     }, [user, storage])
-
-
-    const [image, setImage] = useState(null);
-    const [progress, setProgress] = useState(0);
-    const [downloadURL, setDownloadURL] = useState(null);
-    const [downloadURLSofCurrentUser, setdownloadURLSofCurrentUser] = useState([]);
 
 
     // const props = {
@@ -133,6 +135,8 @@ const TestImages = () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     setDownloadURL(downloadURL);
                 });
+                //! try another way to perform reload
+                location.reload();
             }
         );
     };
@@ -176,17 +180,51 @@ const TestImages = () => {
         console.log(downloadURLSofCurrentUser)
     }
 
-    if (loading) return <>
-        <div className="m-20 text-center pt-20">
-            <Spin tip="loading..." size="large" ><div /></Spin>
-        </div>
-    </>
+    const getFileName = (url) => {
+        const filename = new URL(url).pathname.split("/").pop();
+        const filenameWithoutQueryParametersAndHash = filename.split("?")[0].split("#")[0];
+        const filenameParts = filename.split("%2F");
+        return filenameParts[1];
+    }
+
+    const handleDelete = (url) => {
+
+        const filename = new URL(url).pathname.split("/").pop();
+        const filenameWithoutQueryParametersAndHash = filename.split("?")[0].split("#")[0];
+        const filenameParts = filename.split("%2F");
+        console.log(filenameParts[1])
+
+        // Create a reference to the file to delete
+        const desertRef = ref(storage, user.uid + '/' + filenameParts[1]);
+
+        // Delete the file
+        deleteObject(desertRef).then(() => {
+            // File deleted successfully
+        }).catch((error) => {
+            // Uh-oh, an error occurred!
+        });
+        location.reload()
+    }
+
+    const handleDownload = (url) => {
+        //TODO Image not downloading
+        fetch(url).then((res) => res.blob()).then((blob) => {
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'image.png'; //TODO: Change this
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+
+    }
+
+    if (loading) return <Loading />
 
     if (!user) return <Custom403 />
 
     return (
-
-
         <div>
 
             <Title>{user && user.displayName}'s Images </Title>
@@ -196,20 +234,22 @@ const TestImages = () => {
 
             {progress > 0 && <Progress type="circle" percent={progress} />}
 
-
             {downloadURL && <Image src={downloadURL} width={200} />}
-            <div><Button onClick={getAllDownloadUrls}>Get all download urls of current user</Button></div>
+            {/* <div><Button onClick={getAllDownloadUrls}>
+                Get all download urls of current user
+            </Button></div> */}
             <Row>
                 {downloadURLSofCurrentUser ? downloadURLSofCurrentUser.map((url) =>
                     <Col key={url}>
-                        <Image src={url} width={200} />
+                        <Image src={url} width={200} download /> <br />
+                        <Button onClick={() => handleDelete(url)} icon={<DeleteOutlined />} type="primary" danger shape="round"></Button>
+                        <Button type="primary" onClick={() => handleDownload(url)} icon={<DownloadOutlined />} >
+                            Download
+                        </Button>
                     </Col>) : <Title>Nothing to display</Title>}
             </Row>
 
         </div>
-
-
-
     );
 };
 

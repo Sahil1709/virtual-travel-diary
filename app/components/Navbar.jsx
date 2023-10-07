@@ -96,7 +96,6 @@ const Navbar = () => {
   };
 
   return (
-    //! on performing a full reload, selected key disappears
     <Menu
       onClick={onClick}
       items={items}
