@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getDoc, where, doc, getDocs, collection, setDoc, addDoc, query } from "firebase/firestore";
+import { getDoc, where, doc, getDocs, collection, setDoc, addDoc, query, deleteDoc } from "firebase/firestore";
 import { database } from "@/app/firebase";
 import Title from "antd/es/typography/Title";
 import { useParams } from "next/navigation";
@@ -82,6 +82,22 @@ const Diary = () => {
         setCurrentCollaborators(data);
     }
 
+    const removeCollaborator = async (cId) => {
+        // todo: get a document where collaboratorId = currentCollaborator id and diaryId = paramsId
+        // delete that document
+        const collaboratorsRef = collection(database, 'collaborators');
+
+        const q = query(collaboratorsRef, where('diaryId', '==', params.id), where('collaboratorId', '==', cId));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(async (collaboratorData) => {
+            console.log(collaboratorData.data());
+            const docId = collaboratorData.id;
+            await deleteDoc(doc(collaboratorsRef, docId));
+        })
+
+        getCollaborators();
+    }
+
     useEffect(() => {
         const getDocument = async () => {
             const docRef = doc(database, "diaries", params.id);
@@ -127,9 +143,11 @@ const Diary = () => {
                 header={<Title level={3}>Users Collaborating on this diary :</Title>}
                 bordered
                 dataSource={currentCollaborators}
+                //todo: change item to hold a list of objects 
                 renderItem={(item) => (
                     <List.Item>
                         <Typography mark>{item}</Typography>
+                        <Button type="primary" danger onClick={() => removeCollaborator(item)}>Remove</Button>
                     </List.Item>
                 )}
             />
