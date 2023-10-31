@@ -13,10 +13,19 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
-    const googleSignIn = () => {
+    const googleSignIn = async () => {
         const provider = new GoogleAuthProvider();
-        //! Handle firebase error user cancelled popup
-        signInWithPopup(auth, provider);
+        // signInWithPopup(auth, provider);
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            if (error.code === 'auth/popup-closed-by-user') {
+                console.log('User closed the sign-in popup.');
+            } else {
+                console.error('Firebase authentication error:', error);
+            }
+        }
+
     };
 
     const logOut = () => {
@@ -27,18 +36,21 @@ export const AuthContextProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
             // after signin create a user entry in users collection
-            const docRef = doc(database, "users", currentUser?.uid);
-            if (docRef == null) {
-                setDoc(docRef, {
-                    firstName: "",
-                    lastName: "",
-                    phone: "",
-                    address: "",
-                    zip: "",
-                    displayName: currentUser?.displayName,
-                });
-                console.log('Success:');
+            if (currentUser) {
+                const docRef = doc(database, "users", currentUser?.uid);
+                if (docRef == null) {
+                    setDoc(docRef, {
+                        firstName: "",
+                        lastName: "",
+                        phone: "",
+                        address: "",
+                        zip: "",
+                        displayName: currentUser?.displayName,
+                    });
+                    console.log('Success:');
+                }
             }
+
 
         });
         return () => unsubscribe();
