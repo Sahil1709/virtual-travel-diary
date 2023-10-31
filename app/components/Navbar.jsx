@@ -88,6 +88,10 @@ const Navbar = () => {
       label: <a href={"/testImages"}>Test Images</a>,
       key: "/testImages",
     },
+    {
+      label: <Link href={"/testCollaborators"}>Test Collaborators</Link>,
+      key: "/testCollaborators",
+    },
   ];
 
   const onClick = (e) => {

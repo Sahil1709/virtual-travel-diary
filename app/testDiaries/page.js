@@ -66,6 +66,7 @@ const TestDiaries = () => {
             await setDoc(doc(database, "diaries", editId), {
                 ...values,
                 userId: user.uid,
+
             })
             setEditId(null);
         } else {

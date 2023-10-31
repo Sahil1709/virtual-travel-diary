@@ -81,7 +81,8 @@ const TestAuthentication = () => {
             phone: profileData.phone,
             address: profileData.address,
             zip: profileData.zip,
-        });
+            displayName: user.displayName,
+        }, { merge: true });
         openNotification("success", "Success", "Your profile is updated successfully!");
         console.log('Success:', values);
     };
