@@ -3,16 +3,18 @@ import React, { useEffect, useState } from "react";
 import { getDoc, where, doc, getDocs, collection, setDoc, addDoc, query, deleteDoc } from "firebase/firestore";
 import { database } from "@/app/firebase";
 import Title from "antd/es/typography/Title";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import NotFound from "@/app/not-found";
 import Loading from "@/app/loading";
 import Custom403 from "@/app/components/Custom403";
 import { UserAuth } from "@/app/context/AuthContext";
-import { Button, Select, List, Divider } from "antd";
+import { Button, Select, List, Divider, FloatButton } from "antd";
+import { ShareAltOutlined, CopyOutlined, WhatsAppOutlined, FacebookOutlined } from '@ant-design/icons';
 import Typography from "antd/es/typography/Typography";
 
 const Diary = () => {
     const params = useParams();
+    const pathname = usePathname();
     const { user } = UserAuth();
     const [diary, setDiary] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -20,6 +22,8 @@ const Diary = () => {
     const [collaborators, setCollaborators] = useState([]);
     const [currentCollaborators, setCurrentCollaborators] = useState([]);
     const [collaboratorDetails, setCollaboratorDetails] = useState([]);
+
+    const currentUrl = process.env.NEXT_PUBLIC_DOMAIN_NAME + pathname;
 
     //todo: Make this a protected route
     const getUsers = async () => {
@@ -136,6 +140,21 @@ const Diary = () => {
         getCollaborators();
     }, []);
 
+    const copyToClipboard = () => {
+        console.log(`${process.env.NEXT_PUBLIC_DOMAIN_NAME}${pathname}`)
+        navigator.clipboard.writeText(currentUrl).then(() => {
+            console.log("Copied")
+        });
+    };
+
+    const shareOnWhatsApp = () => {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(currentUrl)}`);
+    };
+
+    const shareOnFacebook = () => {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`);
+    };
+
     if (loading) return <Loading />
 
     if (!user) return <Custom403 />
@@ -144,6 +163,33 @@ const Diary = () => {
 
     return (
         <>
+            <FloatButton.Group
+                trigger="click"
+                type="primary"
+                style={{
+                    right: 24,
+                }}
+                icon={<ShareAltOutlined />}
+                tooltip={"Share"}
+            >
+                <FloatButton onClick={shareOnFacebook} icon={<FacebookOutlined />} tooltip={"Facebook"} />
+                <FloatButton onClick={shareOnWhatsApp} icon={<WhatsAppOutlined />} tooltip={"WhatsApp"} />
+                <FloatButton onClick={copyToClipboard} icon={<CopyOutlined />} tooltip={"Copy To Clipboard!"} />
+
+            </FloatButton.Group>
+            {/* <FloatButton.Group
+                trigger="hover"
+                type="primary"
+                style={{
+                    right: 94,
+                }}
+                icon={<CustomerServiceOutlined />}
+            >
+                <FloatButton />
+                <FloatButton icon={<CommentOutlined />} />
+            </FloatButton.Group> */}
+
+
             <Title>Diary {params.id}</Title>
             <h1>Name: {diary.diaryName}</h1>
             <div>Location: {diary.location}</div>
@@ -172,6 +218,8 @@ const Diary = () => {
                     </List.Item>
                 )}
             />
+
+            <Title level={3}>USER Comment SECTION</Title>
 
 
         </>

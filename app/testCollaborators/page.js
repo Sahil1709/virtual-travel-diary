@@ -83,6 +83,7 @@ const TestCollaborators = async () => {
     }
 
     const onFinish = async (values) => {
+        //!after diary edited not instantly reflecting in ui
         if (editId) {
             // Update existing diary entry
             // await database.collection("diaries").doc(editId).update(values);
@@ -154,7 +155,7 @@ const TestCollaborators = async () => {
                 renderItem={(diary) => (
                     <List.Item style={{ justifyContent: "center" }}>
                         <Card
-                            title={<Link href={pathname + '/' + diary.id} className="text-black font-bold">{diary.diaryName}</Link>}
+                            title={<Link href={'/testDiaries/' + diary.id} className="text-black font-bold">{diary.diaryName}</Link>}
                             extra={
                                 <>
                                     <Button type="link" onClick={() => onEdit(diary)}>
