@@ -37,6 +37,7 @@ const TestDiaries = () => {
         };
         checkAuthentication();
     }, [user]);
+
     useEffect(() => {
         if (user) {
             // Fetch diaries for the current user

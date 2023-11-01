@@ -19,6 +19,7 @@ const Diary = () => {
     const [options, setOptions] = useState([]);
     const [collaborators, setCollaborators] = useState([]);
     const [currentCollaborators, setCurrentCollaborators] = useState([]);
+    const [collaboratorDetails, setCollaboratorDetails] = useState([]);
 
     //todo: Make this a protected route
     const getUsers = async () => {
@@ -63,6 +64,7 @@ const Diary = () => {
     }
 
     const addCollaborators = (diaryId, collaborators) => {
+        //todo: user can't add himself as a collaborator
         collaborators.forEach((collaborator) => {
             addCollaborator(diaryId, collaborator);
         })
@@ -80,11 +82,29 @@ const Diary = () => {
             data.push(doc.data().collaboratorId);
         });
         setCurrentCollaborators(data);
+        getCollaboratorDetails(data)
+    }
+
+    const getCollaboratorDetails = async (collaboratorIds) => {
+        console.log(collaboratorIds)
+        const data = [];
+        collaboratorIds.forEach(async (collaboratorId) => {
+            console.log(collaboratorId);
+            const docRef = doc(database, "users", collaboratorId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+                data.push({ ...docSnap.data(), id: docSnap.id });
+            } else {
+                console.log("No such document!");
+            }
+            setCollaboratorDetails(data);
+        });
     }
 
     const removeCollaborator = async (cId) => {
-        // todo: get a document where collaboratorId = currentCollaborator id and diaryId = paramsId
-        // delete that document
+        //!BUG: when the collaborator being removed is the last one, ui doesn't update
         const collaboratorsRef = collection(database, 'collaborators');
 
         const q = query(collaboratorsRef, where('diaryId', '==', params.id), where('collaboratorId', '==', cId));
@@ -128,6 +148,7 @@ const Diary = () => {
             <h1>Name: {diary.diaryName}</h1>
             <div>Location: {diary.location}</div>
             <div>Description: {diary.description}</div>
+            {/* // todo: Set default selected users to users collaborating on this diary */}
             <Select
                 mode="tags"
                 style={{
@@ -138,16 +159,16 @@ const Diary = () => {
                 options={options}
             />
             <Button onClick={() => addCollaborators(params.id, collaborators)}>Add Collaborators</Button>
-            <Button onClick={() => console.log(currentCollaborators)}>TEst</Button>
+            <Button onClick={() => console.log(collaboratorDetails)}>TEst</Button>
             <List
                 header={<Title level={3}>Users Collaborating on this diary :</Title>}
                 bordered
-                dataSource={currentCollaborators}
+                dataSource={collaboratorDetails}
                 //todo: change item to hold a list of objects 
                 renderItem={(item) => (
                     <List.Item>
-                        <Typography mark>{item}</Typography>
-                        <Button type="primary" danger onClick={() => removeCollaborator(item)}>Remove</Button>
+                        <Typography mark>{item.displayName}</Typography>
+                        <Button type="primary" danger onClick={() => removeCollaborator(item.id)}>Remove</Button>
                     </List.Item>
                 )}
             />
