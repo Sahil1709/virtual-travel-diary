@@ -8,6 +8,7 @@ const MyFooter = () => {
         bottom: 0,
         width: "100%",
         backgroundColor: "white",
+        position: "fixed",
       }}
     >
       Virtual Travel Diary ©2023 Created by Sahil Gupta

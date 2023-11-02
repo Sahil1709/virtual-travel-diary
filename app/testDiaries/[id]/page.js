@@ -11,6 +11,7 @@ import { UserAuth } from "@/app/context/AuthContext";
 import { Button, Select, List, Divider, FloatButton } from "antd";
 import { ShareAltOutlined, CopyOutlined, WhatsAppOutlined, FacebookOutlined } from '@ant-design/icons';
 import Typography from "antd/es/typography/Typography";
+import CommentSection from "@/app/components/CommetSection";
 
 const Diary = () => {
     const params = useParams();
@@ -151,10 +152,6 @@ const Diary = () => {
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(currentUrl)}`);
     };
 
-    const shareOnFacebook = () => {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`);
-    };
-
     if (loading) return <Loading />
 
     if (!user) return <Custom403 />
@@ -172,23 +169,11 @@ const Diary = () => {
                 icon={<ShareAltOutlined />}
                 tooltip={"Share"}
             >
-                <FloatButton onClick={shareOnFacebook} icon={<FacebookOutlined />} tooltip={"Facebook"} />
+
                 <FloatButton onClick={shareOnWhatsApp} icon={<WhatsAppOutlined />} tooltip={"WhatsApp"} />
                 <FloatButton onClick={copyToClipboard} icon={<CopyOutlined />} tooltip={"Copy To Clipboard!"} />
 
             </FloatButton.Group>
-            {/* <FloatButton.Group
-                trigger="hover"
-                type="primary"
-                style={{
-                    right: 94,
-                }}
-                icon={<CustomerServiceOutlined />}
-            >
-                <FloatButton />
-                <FloatButton icon={<CommentOutlined />} />
-            </FloatButton.Group> */}
-
 
             <Title>Diary {params.id}</Title>
             <h1>Name: {diary.diaryName}</h1>
@@ -219,8 +204,8 @@ const Diary = () => {
                 )}
             />
 
-            <Title level={3}>USER Comment SECTION</Title>
 
+            <CommentSection diaryId={params.id} />
 
         </>
     );
