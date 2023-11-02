@@ -88,6 +88,7 @@ const getCommentsForDiary = async (diaryId) => {
 
 // Function to add a comment to a diary
 const addCommentToDiary = async (diaryId, userId, text) => {
+  // todo: Handle text cannot be empty
   const commentsRef = collection(database, "comments");
   await addDoc(commentsRef, {
     diaryId: diaryId,
@@ -111,12 +112,18 @@ const CommentSection = ({ diaryId }) => {
   }, []);
 
   const handleAddComment = (text) => {
+    if (text == "") {
+      console.log("Comment cannot be empty");
+      return;
+    }
     // Add a new comment to the diary
     addCommentToDiary(diaryId, userId, text).then(() => {
       // Refresh comments after adding a new comment
       getCommentsForDiary(diaryId).then((comments) => {
         setComments(comments);
       });
+
+      setText("");
     });
   };
 

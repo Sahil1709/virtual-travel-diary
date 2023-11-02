@@ -195,7 +195,6 @@ const Diary = () => {
                 header={<Title level={3}>Users Collaborating on this diary :</Title>}
                 bordered
                 dataSource={collaboratorDetails}
-                //todo: change item to hold a list of objects 
                 renderItem={(item) => (
                     <List.Item>
                         <Typography mark>{item.displayName}</Typography>

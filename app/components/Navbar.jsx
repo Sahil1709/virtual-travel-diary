@@ -92,6 +92,10 @@ const Navbar = () => {
       label: <Link href={"/testCollaborators"}>Test Collaborators</Link>,
       key: "/testCollaborators",
     },
+    {
+      label: <Link href={"/testStatistics"}>Test Statistics</Link>,
+      key: "/testStatistics",
+    },
   ];
 
   const onClick = (e) => {
