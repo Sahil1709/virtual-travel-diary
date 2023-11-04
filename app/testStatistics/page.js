@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { LikeOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { LikeOutlined, ArrowUpOutlined, ArrowDownOutlined, FormOutlined, ReadOutlined, RocketOutlined, CommentOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import { Col, Row, Statistic, Card, Typography } from 'antd';
 import Title from 'antd/es/typography/Title';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -83,11 +83,14 @@ const TestStatistics = () => {
 
     useEffect(() => {
         // Fetch and set user statistics
-        getUserStatistics(userId).then((stats) => {
-            setStatistics(stats);
-            setLoading(false);
-        });
-    }, [userId]);
+        if (user) {
+            getUserStatistics(userId).then((stats) => {
+                setStatistics(stats);
+                setLoading(false);
+            });
+        }
+
+    }, [userId, statistics]);
 
     if (!user) return <Custom403 />
 
@@ -96,45 +99,106 @@ const TestStatistics = () => {
     return (
         <div className='m-10'>
             <Title>View your stats: 👀</Title>
-            <Row gutter={16}>
-                <Col span={12}>
-                    <Card bordered={false}>
+            <Row gutter={[16, 16]}>
+                <Col span={8}>
+                    <Card >
                         <Statistic
-                            title="Active"
-                            value={11.28}
-                            precision={2}
+                            title={<div className='font-bold text-zinc-900'>Number of diaries created</div>}
+                            value={statistics.numberOfDiaries}
                             valueStyle={{
-                                color: '#3f8600',
+                                color: '#27477a',
+                                fontSize: "32px",
+                                fontWeight: "bolder",
+                                textAlign: "center"
                             }}
-                            prefix={<ArrowUpOutlined />}
-                            suffix="%"
+                            prefix={<ReadOutlined />}
+                            suffix=""
                         />
                     </Card>
                 </Col>
-                <Col span={12}>
-                    <Card bordered={false}>
+                <Col span={8}>
+                    <Card >
                         <Statistic
-                            title="Idle"
-                            value={9.3}
-                            precision={2}
+                            title={<div className='font-bold text-zinc-900'>Total Comments created by you</div>}
+                            value={statistics.totalComments}
                             valueStyle={{
-                                color: '#cf1322',
+                                color: '#27477a',
+                                fontSize: "32px",
+                                fontWeight: "bolder",
+                                textAlign: "center"
                             }}
-                            prefix={<ArrowDownOutlined />}
-                            suffix="%"
+                            prefix={<CommentOutlined />}
+                            suffix=""
                         />
                     </Card>
                 </Col>
-            </Row>
-            <h2>User Statistics</h2>
-            <p>Number of Diaries Created: {statistics.numberOfDiaries}</p>
-            <p>Total Comments created by you: {statistics.totalComments}</p>
-            <p>Number of Countries Visited: {statistics.numberOfCountriesVisited}</p>
-            <p>Number of Diaries you're collaborating: {statistics.numberOfCollaborators}</p>
-            <p>Total Comments in All Diaries: {statistics.totalCommentsForUser}</p>
-            <p>Number of Collaborators: {statistics.totalCollaborators}</p>
+                <Col span={8}>
+                    <Card >
+                        <Statistic
+                            title={<div className='font-bold text-zinc-900'>Number of Countries Visited</div>}
+                            value={statistics.numberOfCountriesVisited}
+                            valueStyle={{
+                                color: '#27477a',
+                                fontSize: "32px",
+                                fontWeight: "bolder",
+                                textAlign: "center"
+                            }}
+                            prefix={<RocketOutlined />}
+                            suffix=""
+                        />
+                    </Card>
+                </Col>
+                <Col span={8}>
+                    <Card >
+                        <Statistic
+                            title={<div className='font-bold text-zinc-900'>Number of Diaries you're collaborating on</div>}
+                            value={statistics.numberOfCollaborators}
+                            valueStyle={{
+                                color: '#27477a',
+                                fontSize: "32px",
+                                fontWeight: "bolder",
+                                textAlign: "center"
+                            }}
+                            prefix={<FormOutlined />}
+                            suffix=""
+                        />
+                    </Card>
+                </Col>
+                <Col span={8}>
+                    <Card >
+                        <Statistic
+                            title={<div className='font-bold text-zinc-900'>Number of Collaborators you've added</div>}
+                            value={statistics.totalCollaborators}
+                            valueStyle={{
+                                color: '#27477a',
+                                fontSize: "32px",
+                                fontWeight: "bolder",
+                                textAlign: "center"
+                            }}
+                            prefix={<UserSwitchOutlined />}
+                            suffix=""
+                        />
+                    </Card>
+                </Col>
+                <Col span={8}>
+                    <Card >
+                        <Statistic
+                            title={<div className='font-bold text-zinc-900'>Total Comments you've acquired </div>}
+                            value={statistics.totalCommentsForUser}
+                            valueStyle={{
+                                color: '#27477a',
+                                fontSize: "32px",
+                                fontWeight: "bolder",
+                                textAlign: "center"
+                            }}
+                            prefix={<LikeOutlined />}
+                            suffix=""
+                        />
+                    </Card>
+                </Col>
 
-            {/* Use Chart.js to create charts for statistics */}
+            </Row>
+
         </div>
     );
 }

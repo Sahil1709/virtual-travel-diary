@@ -30,7 +30,7 @@ const TestCollaborators = async () => {
 
     useEffect(() => {
         if (user) getDiaryIds()
-    }, [user]);
+    }, [user, database]);
 
     const getDiaryIds = async () => {
         const data = [];
@@ -62,13 +62,10 @@ const TestCollaborators = async () => {
             }
             setDiaries(data);
         });
-
+        setDiaries(data);
     }
 
     const removeCollaborator = async (diaryId) => {
-        //!BUG: when the diary being removed is the last one, ui doesn't update
-        //! it goes away from currentDiaryIds though.
-        //! after complete reload everything works fine
         const collaboratorsRef = collection(database, 'collaborators');
 
         const q = query(collaboratorsRef, where('diaryId', '==', diaryId), where('collaboratorId', '==', user.uid));
@@ -92,8 +89,11 @@ const TestCollaborators = async () => {
                 //userId: user.uid,
 
             }, { merge: true })
+
             setEditId(null);
+
         }
+
         form.resetFields();
         setVisible(false);
     };
@@ -113,14 +113,7 @@ const TestCollaborators = async () => {
             <h1>Diaries that You're Collaborating on:</h1>
             <Button onClick={getDiaries}>TESt</Button>
             <Button onClick={() => console.log(diaries)}>Test2</Button>
-            <ul>
-                {currentDiaryIds?.map((diaryId) => (
-                    <>
-                        <li key={diaryId}>{diaryId}</li>
-                        <Button danger type="primary" onClick={() => removeCollaborator(diaryId)}>Don't want to collaborate anymore</Button>
-                    </>
-                ))}
-            </ul>
+
 
             <Modal
                 title={editId ? "Edit Diary Entry" : "Add Diary Entry"}

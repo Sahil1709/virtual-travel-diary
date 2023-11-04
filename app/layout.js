@@ -26,8 +26,8 @@ export default function RootLayout({ children }) {
             <Content style={{ height: "100vh" }}>
               {children}
             </Content>
-
-            <MyFooter />
+            {/* //todo: add back after fixing footer styles */}
+            {/* <MyFooter /> */}
           </Layout>
         </AuthContextProvider>
       </body>
