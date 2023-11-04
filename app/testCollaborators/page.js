@@ -19,6 +19,7 @@ const TestCollaborators = async () => {
     const [visible, setVisible] = useState(false);
     const [editId, setEditId] = useState(null);
     const [form] = Form.useForm();
+    const [uiRefresher, setUiRefresher] = useState(false);
 
     useEffect(() => {
         const checkAuthentication = async () => {
@@ -27,6 +28,32 @@ const TestCollaborators = async () => {
         };
         checkAuthentication();
     }, [user]);
+
+    useEffect(() => {
+        console.log("UI refreshed")
+    }, [uiRefresher]);
+
+    // useEffect(() => {
+    //     if (user) {
+    //         // Fetch diaries for the current user
+    //         const q = query(
+    //             collection(database, "diaries"),
+    //             where("userId", "==", user.uid)
+    //         );
+
+    //         //const querySnapshot = getDocs(q);
+
+    //         const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //             const data = [];
+    //             querySnapshot.forEach((doc) => {
+    //                 data.push({ ...doc.data(), id: doc.id });
+    //             });
+    //             setDiaries(data);
+    //         });
+
+    //         return () => unsubscribe();
+    //     }
+    // }, [user, database]);
 
     useEffect(() => {
         if (user) getDiaryIds()
@@ -80,7 +107,6 @@ const TestCollaborators = async () => {
     }
 
     const onFinish = async (values) => {
-        //!after diary edited not instantly reflecting in ui
         if (editId) {
             // Update existing diary entry
             // await database.collection("diaries").doc(editId).update(values);
@@ -90,12 +116,18 @@ const TestCollaborators = async () => {
 
             }, { merge: true })
 
+            // await new Promise((resolve) => setTimeout(resolve, 10000));
+
             setEditId(null);
 
         }
-
+        getDiaryIds();
         form.resetFields();
         setVisible(false);
+        setTimeout(() => {
+            setUiRefresher(!uiRefresher);
+        }, 1000);
+        //setUiRefresher(!uiRefresher)
     };
 
     const onEdit = (diary) => {
@@ -111,9 +143,9 @@ const TestCollaborators = async () => {
     return (
         <div>
             <h1>Diaries that You're Collaborating on:</h1>
-            <Button onClick={getDiaries}>TESt</Button>
+            <Button onClick={getDiaryIds}>TESt</Button>
             <Button onClick={() => console.log(diaries)}>Test2</Button>
-
+            <Button onClick={() => setUiRefresher(!uiRefresher)}>Refresh</Button>
 
             <Modal
                 title={editId ? "Edit Diary Entry" : "Add Diary Entry"}

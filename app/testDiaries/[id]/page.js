@@ -25,6 +25,7 @@ const Diary = () => {
     const [collaborators, setCollaborators] = useState([]);
     const [currentCollaborators, setCurrentCollaborators] = useState([]);
     const [collaboratorDetails, setCollaboratorDetails] = useState([]);
+    const [uiRefresher, setUiRefresher] = useState(false);
 
     const currentUrl = process.env.NEXT_PUBLIC_DOMAIN_NAME + pathname;
 
@@ -68,17 +69,34 @@ const Diary = () => {
         await addDoc(collection(database, "collaborators"), {
             diaryId: diaryId,
             collaboratorId: collaboratorId,
-        });
+        })
+
+        //console.log(addedDoc)
         console.log(`Successfullly added ${collaboratorId}`)
         openNotification("success", "Success!", "Successfully added new collaborator")
-        getCollaborators();
+        //getCollaborators();
+        // console.log(uiRefresher)
+        // setUiRefresher(!uiRefresher)
+
     }
 
-    const addCollaborators = (diaryId, collaborators) => {
-        //!BUG: when adding all collaborators ui shows only one is added
-        collaborators.forEach((collaborator) => {
-            addCollaborator(diaryId, collaborator);
-        })
+    const addCollaborators = async (diaryId, collaborators) => {
+        // const promises = collaborators.map((collaborator) => addCollaborator(diaryId, collaborator));
+        // await Promise.all(promises);
+        // getCollaborators();
+        // console.log(uiRefresher);
+        // setUiRefresher(!uiRefresher);
+        try {
+            const promises = collaborators.map((collaborator) => addCollaborator(diaryId, collaborator));
+            await Promise.all(promises);
+            getCollaborators();
+        } catch (error) {
+            console.error("Error adding collaborators:", error);
+            openNotification("error", "Error!", "Failed to add collaborators.");
+        }
+        // collaborators.forEach(async (collaborator) => {
+        //     addCollaborator(diaryId, collaborator);
+        // })
     }
 
     const getCollaborators = async () => {
@@ -170,6 +188,10 @@ const Diary = () => {
         getCollaborators();
     }, [user, collaborators]);
 
+    useEffect(() => {
+        console.log("UI refreshed")
+    }, [uiRefresher]);
+
     const copyToClipboard = () => {
         console.log(`${process.env.NEXT_PUBLIC_DOMAIN_NAME}${pathname}`)
         navigator.clipboard.writeText(currentUrl).then(() => {
@@ -221,7 +243,8 @@ const Diary = () => {
                 options={options}
             />
             <Button onClick={() => addCollaborators(params.id, collaborators)}>Add Collaborators</Button>
-            <Button onClick={() => console.log(collaboratorDetails)}>TEst</Button>
+
+
             <List
                 header={<Title level={3}>Users Collaborating on this diary :</  Title>}
                 bordered
