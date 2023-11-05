@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Layout, Menu, Row, Col, Button, Space } from "antd";
+import { Layout, Menu, Row, Col, Button, Space, Tooltip, Avatar } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
 import Navbar from "./Navbar";
 import Title from "antd/es/typography/Title";
 import Text from "antd/es/typography/Text";
 import { UserAuth } from "../context/AuthContext";
+import Link from "next/link";
 
 const Header = () => {
   const { user, googleSignIn, logOut } = UserAuth();
@@ -51,7 +53,30 @@ const Header = () => {
               Log In
             </Button>
           ) : (
-            <Button onClick={handleSignOut}>Sign Out</Button>
+            <Row gutter={8}>
+              <Col>
+                <Tooltip title={user.displayName} placement="bottom">
+                  <Link href={"/testAuthentication"}>
+                    <Avatar
+                      style={{ backgroundColor: "#f56a00" }}
+                      size={"large"}
+                    >
+                      {user.displayName[0] + user.displayName.split(" ")[1][0]}
+                    </Avatar>
+                  </Link>
+                </Tooltip>
+              </Col>
+              <Col>
+                <Button
+                  onClick={handleSignOut}
+                  type="primary"
+                  danger
+                  icon={<LogoutOutlined />}
+                >
+                  Sign Out
+                </Button>
+              </Col>
+            </Row>
           )}
         </Col>
       </Row>

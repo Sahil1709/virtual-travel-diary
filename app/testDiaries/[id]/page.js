@@ -19,6 +19,7 @@ const Diary = () => {
     const { user } = UserAuth();
     const [api, contextHolder] = notification.useNotification();
     const [diary, setDiary] = useState(null);
+    const [creator, setCreator] = useState("");
     const [loading, setLoading] = useState(true);
     const [options, setOptions] = useState([]);
     const [displayNames, setDisplayNames] = useState([]);
@@ -52,7 +53,7 @@ const Diary = () => {
     };
 
     const addCollaborator = async (diaryId, collaboratorId) => {
-        //todo: add notifications
+
         const collaboratorsRef = collection(database, 'collaborators');
 
         // Check if a document with the same diaryId and collaboratorId already exists
@@ -177,6 +178,9 @@ const Diary = () => {
             if (docSnap.exists()) {
                 //console.log("Document data:", docSnap.data());
                 setDiary(docSnap.data());
+                const creatorSnap = await getDoc(doc(database, "users", docSnap.data().userId));
+                console.log(creatorSnap.data());
+                setCreator(creatorSnap.data().displayName)
             } else {
                 // docSnap.data() will be undefined in this case
                 console.log("No such document!");
@@ -228,21 +232,26 @@ const Diary = () => {
 
             </FloatButton.Group>
 
-            <Title>Diary {params.id}</Title>
-            <h1>Name: {diary.diaryName}</h1>
-            <div>Location: {diary.location}</div>
-            <div>Description: {diary.description}</div>
-            {/* // todo: Set default selected users to users collaborating on this diary */}
-            <Select
-                mode="tags"
-                style={{
-                    width: '100%',
-                }}
-                placeholder="Select Collaborators"
-                onChange={handleChange}
-                options={options}
-            />
-            <Button onClick={() => addCollaborators(params.id, collaborators)}>Add Collaborators</Button>
+            <Title>Diary Name: {diary.diaryName}</Title>
+            <div >diary id: {params.id}</div>
+            <div className="text-lg">
+                Created by: {creator} <br />
+                Location: {diary.location} <br />
+                Description: {diary.description}
+            </div>
+
+            {diary.userId == user.uid ? <>
+                <Select
+                    mode="tags"
+                    style={{
+                        width: '100%',
+                    }}
+                    placeholder="Select Collaborators"
+                    onChange={handleChange}
+                    options={options}
+                />
+                <Button onClick={() => addCollaborators(params.id, collaborators)}>Add Collaborators</Button>
+            </> : null}
 
 
             <List
@@ -252,7 +261,8 @@ const Diary = () => {
                 renderItem={(item) => (
                     <List.Item>
                         <Typography mark>{item.displayName}</Typography>
-                        <Button type="primary" danger onClick={() => removeCollaborator(item.id)}>Remove</Button>
+                        {diary.userId == user.uid && <Button type="primary" danger onClick={() => removeCollaborator(item.id)}>Remove</Button>}
+
                     </List.Item>
                 )}
             />
