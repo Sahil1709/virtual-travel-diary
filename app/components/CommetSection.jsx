@@ -98,7 +98,7 @@ const addCommentToDiary = async (diaryId, userId, text) => {
   });
 };
 
-const CommentSection = ({ diaryId }) => {
+const CommentSection = ({ diaryId, openNotification }) => {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
   const { user } = UserAuth();
@@ -114,6 +114,7 @@ const CommentSection = ({ diaryId }) => {
   const handleAddComment = (text) => {
     if (text == "") {
       console.log("Comment cannot be empty");
+      openNotification("error", "Error!", "Comment cannot be empty");
       return;
     }
     // Add a new comment to the diary
@@ -125,6 +126,8 @@ const CommentSection = ({ diaryId }) => {
 
       setText("");
     });
+
+    openNotification("success", "Success!", "Added Comment Successfully.");
   };
 
   return (
@@ -137,12 +140,6 @@ const CommentSection = ({ diaryId }) => {
         onChange={(e) => setText(e.target.value)}
       />
       <Button onClick={() => handleAddComment(text)}>Add comment</Button>
-      {/* {comments.map((comment) => (
-        <li key={comment.id}>
-          {comment.text} created by {comment.userDisplayName} at{" "}
-          {comment.commentTimestamp}
-        </li>
-      ))} */}
 
       <List
         header={<Title level={4}>Comments: </Title>}

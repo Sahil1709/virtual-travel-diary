@@ -26,7 +26,6 @@ const Diary = () => {
     const [collaborators, setCollaborators] = useState([]);
     const [currentCollaborators, setCurrentCollaborators] = useState([]);
     const [collaboratorDetails, setCollaboratorDetails] = useState([]);
-    const [uiRefresher, setUiRefresher] = useState(false);
 
     const currentUrl = process.env.NEXT_PUBLIC_DOMAIN_NAME + pathname;
 
@@ -34,7 +33,6 @@ const Diary = () => {
         const data = [];
         const querySnapshot = await getDocs(collection(database, "users"));
         querySnapshot.forEach((doc) => {
-            // doc.id is user.uid
             if (doc.id != user.uid) {
                 data.push({
                     value: doc.id,
@@ -56,12 +54,10 @@ const Diary = () => {
 
         const collaboratorsRef = collection(database, 'collaborators');
 
-        // Check if a document with the same diaryId and collaboratorId already exists
         const duplicateQuery = query(collaboratorsRef, where('diaryId', '==', diaryId), where('collaboratorId', '==', collaboratorId));
         const duplicateSnapshot = await getDocs(duplicateQuery);
 
         if (!duplicateSnapshot.empty) {
-            // A document with the same diaryId and collaboratorId already exists, handle the duplicate case as needed
             console.log('Duplicate collaborator entry found.');
             openNotification("error", "Error!", "Duplicate collaborator entry found.")
             return;
@@ -72,21 +68,12 @@ const Diary = () => {
             collaboratorId: collaboratorId,
         })
 
-        //console.log(addedDoc)
         console.log(`Successfullly added ${collaboratorId}`)
         openNotification("success", "Success!", "Successfully added new collaborator")
-        //getCollaborators();
-        // console.log(uiRefresher)
-        // setUiRefresher(!uiRefresher)
 
     }
 
     const addCollaborators = async (diaryId, collaborators) => {
-        // const promises = collaborators.map((collaborator) => addCollaborator(diaryId, collaborator));
-        // await Promise.all(promises);
-        // getCollaborators();
-        // console.log(uiRefresher);
-        // setUiRefresher(!uiRefresher);
         try {
             const promises = collaborators.map((collaborator) => addCollaborator(diaryId, collaborator));
             await Promise.all(promises);
@@ -95,9 +82,6 @@ const Diary = () => {
             console.error("Error adding collaborators:", error);
             openNotification("error", "Error!", "Failed to add collaborators.");
         }
-        // collaborators.forEach(async (collaborator) => {
-        //     addCollaborator(diaryId, collaborator);
-        // })
     }
 
     const getCollaborators = async () => {
@@ -176,13 +160,11 @@ const Diary = () => {
             const docRef = doc(database, "diaries", params.id);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                //console.log("Document data:", docSnap.data());
                 setDiary(docSnap.data());
                 const creatorSnap = await getDoc(doc(database, "users", docSnap.data().userId));
                 console.log(creatorSnap.data());
                 setCreator(creatorSnap.data().displayName)
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
             }
             setLoading(false);
@@ -191,10 +173,6 @@ const Diary = () => {
         if (user) getUsers();
         getCollaborators();
     }, [user, collaborators]);
-
-    useEffect(() => {
-        console.log("UI refreshed")
-    }, [uiRefresher]);
 
     const copyToClipboard = () => {
         console.log(`${process.env.NEXT_PUBLIC_DOMAIN_NAME}${pathname}`)
@@ -267,7 +245,7 @@ const Diary = () => {
                 )}
             />
 
-            <CommentSection diaryId={params.id} />
+            <CommentSection diaryId={params.id} openNotification={openNotification} />
 
         </>
     );

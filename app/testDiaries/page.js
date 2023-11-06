@@ -132,7 +132,6 @@ const TestDiaries = () => {
             </Modal>
 
             <List
-                //TODO: Implement a grid here instead of list
                 dataSource={diaries}
                 renderItem={(diary) => (
                     <List.Item style={{ justifyContent: "center" }}>
